@@ -9,6 +9,7 @@ class Market:
     """ First rudimentary market implementation of an agent based model"""
     def __init__(self, num_clusters, herd_coef, p_buy,p_sell,p_hold,t_end):
         print("Initializing market currently many parameters are missing")
+        np.random.seed(0)
         self.probs = [p_buy,p_sell,p_hold]
         self.return_hist = np.zeros(t_end, dtype=int)
         self.volatility_hist = np.zeros(t_end, dtype=int)
