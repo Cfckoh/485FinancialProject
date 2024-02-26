@@ -18,6 +18,8 @@ class Market:
         self.cluster_sizes = np.zeros(num_clusters, dtype=int)
         self.num_agents  = num_clusters*herd_coef
         self._init_clusters()
+        if (p_buy + p_hold + p_sell != 1):
+            raise Exception("INIT: Probabilities don't add up to one")
 
 
     def step(self):
@@ -25,7 +27,7 @@ class Market:
         actions = [BUY,SELL,HOLD]
         
         for size in self.cluster_sizes:
-            #randomly choose an action given the current probabilities NOTE: will error if probabilities do not sum to 1
+            #randomly choose an action given the current probabilities
             action = np.random.choice(actions, p=self.probs)
             ret += size * action
 
@@ -46,6 +48,8 @@ class Market:
 
     def update_probs(self):
         print("TODO update probailities")
+        if (sum(self.probs)):
+            raise Exception("INIT: Probabilities don't add up to one")
 
     def update_clusters(self):
         print("TODO update the clusters")
