@@ -7,9 +7,9 @@ HOLD = 0
 
 class Market:
     """ First rudimentary market implementation of an agent based model"""
-    def __init__(self, num_clusters, herd_coef, p_buy,p_sell,p_hold,t_end):
+    def __init__(self, num_clusters, avg_cluster_size, p_buy,p_sell,p_hold,t_end):
         print("Initializing market currently many parameters are missing")
-        np.random.seed(0)
+        np.random.seed(0) 
         self.probs = [p_buy,p_sell,p_hold]
         self.return_hist = np.zeros(t_end, dtype=int)
         self.volatility_hist = np.zeros(t_end, dtype=int)
@@ -17,7 +17,7 @@ class Market:
         self.t = 0
         self.num_clusters = num_clusters
         self.cluster_sizes = np.zeros(num_clusters, dtype=int)
-        self.num_agents  = num_clusters*herd_coef
+        self.num_agents  = num_clusters*avg_cluster_size
         self._init_clusters()
         if (p_buy + p_hold + p_sell != 1):
             raise Exception("INIT: Probabilities don't add up to one")
