@@ -50,7 +50,7 @@ class Market:
     def update_probs(self):
         print("TODO update probailities")
         if (sum(self.probs)):
-            raise Exception("INIT: Probabilities don't add up to one")
+            raise Exception("Update Probs: Probabilities don't add up to one")
 
     def update_clusters(self):
         print("TODO update the clusters")
