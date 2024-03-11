@@ -1,3 +1,13 @@
 __pycache__/
 .ipynb_checkpoints/
 playground.ipynb
+test.ipynb
+abm-fms-intel-master/.DS_Store
+abm-fms-intel-master/.gitignore
+abm-fms-intel-master/agent.py
+abm-fms-intel-master/LICENSE
+abm-fms-intel-master/market.py
+abm-fms-intel-master/README.txt
+abm-fms-intel-master/utility.py
+abm-fms-intel-master/world.py
+.gitignore
