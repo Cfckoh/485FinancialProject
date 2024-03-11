@@ -1,5 +1,17 @@
 
+import numpy as np
+
 nu = 1.12
+
+def return_from_price(price_arr):
+    """
+    Given an array of closing prices returns an np.array of returns as described in 2.1
+    """
+    # NOTE: the return on the first day is assumed to be 0
+    returns = np.zeros(len(price_arr))
+    for i in range(1,len(price_arr)):
+        returns[i] = np.log(price_arr[i]/price_arr[i-1])
+    return returns
 
 def calc_normalized_return(return_history):
     """
@@ -15,7 +27,7 @@ def calc_normalized_return(return_history):
     R /= len(return_history)
 
     sigma = (R2-R**2)**0.5
-    return (return_history[-1]-R)/sigma
+    return (return_history-R)/sigma
     
 def calc_weighted_return(return_history, M, k = 1):
     """
@@ -35,8 +47,12 @@ def calc_weighted_return(return_history, M, k = 1):
 def calc_L():
     """
     return-volatility correlation function
+    
+    TODO: DISCUSS in class is not clear!!!
+    
     """
     pass
+
 
 
 
