@@ -48,15 +48,18 @@ def calc_L(normal_return_history,t):
     """
     return-volatility correlation function
     """
+    n = len(normal_return_history)-1 # indices go 0 to n-1
+    
     if t > n:
         raise Exception("t is greater than n")
-    n = len(return_history)-1
+    
     summation = 0
     Z = 0
     for i in range(n-t):
-        summation = normal_return_history[i] * np.abs(normal_return_history[i + t])^2
-        Z = np.abs(normal_return_history[i])^2
+        summation += normal_return_history[i] * np.abs(normal_return_history[i + t])**2
+        Z += np.abs(normal_return_history[i])**2
     summation = summation/(n-t) # NOTE: May need +1 here in denominator because of indexing
+    Z = Z/(n-t)
     Z = Z ** 2
     return summation/Z
         
