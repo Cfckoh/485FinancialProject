@@ -36,7 +36,8 @@ def calc_weighted_return(return_history, M, k = 1):
     k is weight
     """
     outter_sum = 0
-    for i in range(1,M+1):
+    max = min(M+1,len(return_history)) # don't go off the end if history is shorter than max horizon
+    for i in range(1,max):
         gamma = i**(-nu)
         inner_sum = 0
         for j in range(i):
