@@ -61,7 +61,20 @@ def calc_L(normal_return_history,t):
     Z = Z/(n-t)
     Z = Z ** 2
     return summation/Z
-        
+
+def average_volatility(volitility_arr, i, t):
+    end_step = min(i,t)
+    temp = volitility_arr[t-end_step:t]
+    return np.sum(volitility_arr)/i
+
+def integrated_volitility_perspective(volitility_arr, M, t):
+    vm = average_volatility(volitility_arr,M,t)
+    outter_sum = 0
+    end_step = min(M,t)
+    for i in range(end_step):
+        gamma = (i+1)**(-nu)
+        outter_sum += gamma * average_volatility(volitility_arr,i,t)
+    return outter_sum/vm
 
 
 
