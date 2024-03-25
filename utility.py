@@ -29,20 +29,18 @@ def calc_normalized_return(return_history):
     sigma = (R2-R**2)**0.5
     return (return_history-R)/sigma
     
-def calc_weighted_return(return_history, M, k = 1):
+def calc_weighted_return(return_history, M, t, k = 1):
     """
     return_history: numpy array full of returns
     M is max investment horizon
     k is weight
     """
     outter_sum = 0
-    max = min(M+1,len(return_history)) # don't go off the end if history is shorter than max horizon
-    for i in range(1,max):
-        gamma = i**(-nu)
-        inner_sum = 0
-        for j in range(i):
-            inner_sum += gamma * return_history[-j] #Not tested maybe wrong
-        outter_sum += inner_sum
+    end_step = min(M,t) # don't go off the end if history is shorter than max horizon
+    for i in range(end_step):
+        gamma = (i+1)**(-nu)
+        r = return_history[t-(i+1):t]
+        outter_sum += gamma * np.sum(r)
     return k * outter_sum
 
 def calc_L(normal_return_history,t):
