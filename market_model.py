@@ -1,5 +1,5 @@
 import numpy as np
-import utility 
+import utility
 
 BUY  = 1
 SELL = -1
@@ -80,12 +80,21 @@ class Market:
         """Assign each agent to a cluster
         NOTE: agents are not there own thing we just track the size of each cluster"""
         num_clusters = int(self.num_agents / self.herding_degree) #determine number of clusters based on herding degree
-        clusters = np.zeros(num_clusters)
+        #clusters = np.zeros(num_clusters)
 
-        for agent in range(self.num_agents):
+        # n random floats 
+        clusters = np.random.rand(num_clusters)
+        # extend the floats so the sum is approximately num_agents (might be less, because of flooring) 
+        clusters = np.floor(clusters*self.num_agents/sum(clusters)).astype(int)
+        # randomly add missing numbers 
+        for i in range(self.num_agents - sum(clusters)): 
+            clusters[np.random.randint(0,num_clusters)] += 1
+
+
+        #for agent in range(self.num_agents):
             # pick a cluster at random
-            cluster = np.random.randint(0,num_clusters)
-            clusters[cluster] += 1
+        #    cluster = np.random.randint(0,num_clusters)
+        #    clusters[cluster] += 1
 
         return clusters
 
