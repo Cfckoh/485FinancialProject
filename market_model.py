@@ -8,9 +8,18 @@ BULL = 0
 NEUTRAL = 1
 BEAR = 2
 
+"""
+TODOs integrate asymmetric trading preference
+- additional param c
+- flag?
+- get volatility perspective 
+- add a different probability function 
+"""
+
+
 class Market:
     """Implementation of an agent based model"""
-    def __init__(self, N, alpha,p, M, t_end, delta_R=0):
+    def __init__(self, N, alpha,p, M, t_end, delta_R=0, c=0, asymmetric_preference=False):
         """
         params: N: number of agents
                 alpha: asymmetrics trading param
@@ -36,6 +45,12 @@ class Market:
         self.herding_degree = 1/N
         self.cluster_sizes = self.get_new_clusters()
         self.market_state = NEUTRAL
+        self.asymmetric_preference = asymmetric_preference
+        self.p = p
+        if asymmetric_preference:
+            self.c = c
+
+        
         
 
 
@@ -43,10 +58,20 @@ class Market:
         ret = 0
         actions = [BUY,SELL,HOLD]
         
-        for size in self.cluster_sizes:
-            #randomly choose an action given the current probabilities
-            action = np.random.choice(actions, p=self.probs[self.market_state])
-            ret += size * action
+        # if assymetric preference use different probs
+        if self.asymmetric_preference:
+            p_buy = self.p*(self.c*utility.integrated_volitility_perspective(self.volatility_hist,self.M,self.t)+(1-self.c))
+            probs = [p_buy, 2*self.p-p_buy, 1-2*self.p]
+            for size in self.cluster_sizes:
+                #randomly choose an action given the current probabilities
+                action = np.random.choice(actions, p=probs)
+                ret += size * action
+
+        else:
+            for size in self.cluster_sizes:
+                #randomly choose an action given the current probabilities
+                action = np.random.choice(actions, p=self.probs[self.market_state])
+                ret += size * action
 
         volatility = np.abs(ret)
 
@@ -68,7 +93,7 @@ class Market:
 
 
     def get_market_state(self):
-        R_prime = utility.calc_weighted_return(self.return_hist,self.M)
+        R_prime = utility.calc_weighted_return(self.return_hist,self.M,self.t)
         if R_prime > 0:
             return BULL
         elif R_prime < 0:
@@ -80,7 +105,6 @@ class Market:
         """Assign each agent to a cluster
         NOTE: agents are not there own thing we just track the size of each cluster"""
         num_clusters = int(self.num_agents / self.herding_degree) #determine number of clusters based on herding degree
-        #clusters = np.zeros(num_clusters)
 
         # n random floats 
         clusters = np.random.rand(num_clusters)
@@ -90,16 +114,10 @@ class Market:
         for i in range(self.num_agents - sum(clusters)): 
             clusters[np.random.randint(0,num_clusters)] += 1
 
-
-        #for agent in range(self.num_agents):
-            # pick a cluster at random
-        #    cluster = np.random.randint(0,num_clusters)
-        #    clusters[cluster] += 1
-
         return clusters
 
     def update_clusters(self):
-        self.herding_degree = abs(utility.calc_weighted_return(self.return_hist,self.M) - self.delta_R)/self.num_agents
+        self.herding_degree = abs(utility.calc_weighted_return(self.return_hist,self.M,self.t) - self.delta_R)/self.num_agents
         if self.herding_degree == 0:
             self.herding_degree = 1/self.num_agents # herding degree of 0 doesn't exist 
         self.cluster_sizes = self.get_new_clusters()
