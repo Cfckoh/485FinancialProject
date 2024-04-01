@@ -49,10 +49,7 @@ class Market:
         self.p = p
         if asymmetric_preference:
             self.c = c
-
-        
-        
-
+        self.total_gamma = utility.calc_total_gamma(M)
 
     def step(self):
         ret = 0
@@ -93,7 +90,7 @@ class Market:
 
 
     def get_market_state(self):
-        R_prime = utility.calc_weighted_return(self.return_hist,self.M,self.t)
+        R_prime = utility.calc_weighted_return(self.return_hist, self.M, self.t, self.total_gamma)
         if R_prime > 0:
             return BULL
         elif R_prime < 0:
@@ -117,7 +114,7 @@ class Market:
         return clusters
 
     def update_clusters(self):
-        self.herding_degree = abs(utility.calc_weighted_return(self.return_hist,self.M,self.t) - self.delta_R)/self.num_agents
+        self.herding_degree = abs(utility.calc_weighted_return(self.return_hist,self.M,self.t,self.total_gamma) - self.delta_R)/self.num_agents
         if self.herding_degree == 0:
             self.herding_degree = 1/self.num_agents # herding degree of 0 doesn't exist 
         self.cluster_sizes = self.get_new_clusters()
