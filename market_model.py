@@ -78,8 +78,9 @@ class Market:
         self.herding_hist[self.t] = self.herding_degree
         
         # update clusters
-        self.update_clusters()
-        self.market_state = self.get_market_state()
+        R_prime = utility.calc_weighted_return(self.return_hist, self.M, self.t, self.total_gamma)
+        self.update_clusters(R_prime)
+        self.market_state = self.get_market_state(R_prime)
 
         #increment time
         self.t += 1
@@ -89,8 +90,7 @@ class Market:
             self.step()
 
 
-    def get_market_state(self):
-        R_prime = utility.calc_weighted_return(self.return_hist, self.M, self.t, self.total_gamma)
+    def get_market_state(self,R_prime):
         if R_prime > 0:
             return BULL
         elif R_prime < 0:
@@ -113,8 +113,8 @@ class Market:
 
         return clusters
 
-    def update_clusters(self):
-        self.herding_degree = abs(utility.calc_weighted_return(self.return_hist,self.M,self.t,self.total_gamma) - self.delta_R)/self.num_agents
+    def update_clusters(self,R_prime):
+        self.herding_degree = abs(R_prime - self.delta_R)/self.num_agents
         if self.herding_degree == 0:
             self.herding_degree = 1/self.num_agents # herding degree of 0 doesn't exist 
         self.cluster_sizes = self.get_new_clusters()
