@@ -94,7 +94,10 @@ def integrated_volitility_perspective(volitility_arr, M, t):
     end_step = min(M,t)
     for i in range(end_step):
         gamma = (i+1)**(-nu)
-        outter_sum += gamma * average_volatility(volitility_arr,i,t)
+        outter_sum += gamma * average_volatility(volitility_arr,i+1,t)
+
+    if vm == 0:
+        return 0
     return outter_sum/vm
 
 

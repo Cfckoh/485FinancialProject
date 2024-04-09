@@ -31,7 +31,7 @@ class Market:
         
         print("Initializing Market")
         np.random.seed(0) 
-        self.probs = self._intialize_probs(alpha,p) #[p_buy,p_sell,p_hold]
+        self.probs = self._intialize_probs(alpha,p) #[p_buy,p_sell,p_hold]calc_weighted_return
         self.return_hist = np.zeros(t_end, dtype=int)
         self.volatility_hist = np.zeros(t_end, dtype=int)
         self.herding_hist = np.zeros(t_end, dtype=float)
@@ -78,7 +78,7 @@ class Market:
         self.herding_hist[self.t] = self.herding_degree
         
         # update clusters
-        R_prime = utility.calc_weighted_return(self.return_hist, self.M, self.t, self.total_gamma)
+        R_prime = utility.calc_weighted_return(self.return_hist, self.M, self.t, self.total_gamma,k=10)
         self.update_clusters(R_prime)
         self.market_state = self.get_market_state(R_prime)
 
