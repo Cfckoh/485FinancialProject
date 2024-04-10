@@ -8,14 +8,6 @@ BULL = 0
 NEUTRAL = 1
 BEAR = 2
 
-"""
-TODOs integrate asymmetric trading preference
-- additional param c
-- flag?
-- get volatility perspective 
-- add a different probability function 
-"""
-
 
 class Market:
     """Implementation of an agent based model"""
@@ -30,7 +22,7 @@ class Market:
         """
         
         print("Initializing Market")
-        np.random.seed(0) 
+        #np.random.seed(0) 
         self.probs = self._intialize_probs(alpha,p) #[p_buy,p_sell,p_hold]calc_weighted_return
         self.return_hist = np.zeros(t_end, dtype=int)
         self.volatility_hist = np.zeros(t_end, dtype=int)
@@ -78,7 +70,7 @@ class Market:
         self.herding_hist[self.t] = self.herding_degree
         
         # update clusters
-        R_prime = utility.calc_weighted_return(self.return_hist, self.M, self.t, self.total_gamma,k=10)
+        R_prime = utility.calc_weighted_return(self.return_hist, self.M, self.t, self.total_gamma,k=1.)
         self.update_clusters(R_prime)
         self.market_state = self.get_market_state(R_prime)
 
@@ -101,7 +93,8 @@ class Market:
     def get_new_clusters(self):
         """Assign each agent to a cluster
         NOTE: agents are not there own thing we just track the size of each cluster"""
-        num_clusters = int(self.num_agents / self.herding_degree) #determine number of clusters based on herding degree
+        num_clusters = int(1 / self.herding_degree) + 1 #determine number of clusters based on herding degree plus one so there is always at least one cluster
+        
 
         # n random floats 
         clusters = np.random.rand(num_clusters)
