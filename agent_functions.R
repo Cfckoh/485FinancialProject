@@ -59,3 +59,23 @@ for (t in 1:(max(ts))) {
  return(Rp)
 }
 
+#Calculates Lt for a specified time window returns Tau and Return Volatility Correlations
+leverage<-function(ts,ret,vol, tp, tw, ws){
+  tau<-list() #cumulative time
+  rvc<-list() #return-volatility correlations
+  
+  #initialize tau
+  for (t in seq(from=0,to=tw-tp,by=tp)){
+    wi<-ws
+    wj<-wi+t+tp
+    tau<-append(tau,t+tp)
+    rvc<-append(rvc, cor(ret[wi:wj],vol[wi:wj], use = "complete.obs"))
+  }
+  
+  tau<-unlist(tau)
+  rvc<-unlist(rvc)
+  Lt<-data.frame(tau,rvc)
+  return(Lt)
+}
+
+
