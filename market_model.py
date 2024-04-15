@@ -1,44 +1,78 @@
 import numpy as np
+import utility
 
 BUY  = 1
 SELL = -1
 HOLD = 0
+BULL = 0
+NEUTRAL = 1
+BEAR = 2
 
 
 class Market:
-    """ First rudimentary market implementation of an agent based model"""
-    def __init__(self, num_clusters, avg_cluster_size, p_buy,p_sell,p_hold,t_end):
-        print("Initializing market currently many parameters are missing")
-        np.random.seed(0) 
-        self.probs = [p_buy,p_sell,p_hold]
+    """Implementation of an agent based model"""
+    def __init__(self, N, alpha,p, M, t_end, delta_R=0, c=0, asymmetric_preference=False):
+        """
+        params: N: number of agents
+                alpha: asymmetrics trading param
+                p: trading probability param
+                M: max investment horizon
+                t_end: number of days to run simulation
+                delta_R: assymetric herding param if 0 herding is symmetric
+        """
+        
+        print("Initializing Market")
+        #np.random.seed(0) 
+        self.probs = self._intialize_probs(alpha,p) #[p_buy,p_sell,p_hold]calc_weighted_return
         self.return_hist = np.zeros(t_end, dtype=int)
         self.volatility_hist = np.zeros(t_end, dtype=int)
+        self.herding_hist = np.zeros(t_end, dtype=float)
         self.t_end = t_end
         self.t = 0
-        self.num_clusters = num_clusters
-        self.cluster_sizes = np.zeros(num_clusters, dtype=int)
-        self.num_agents  = num_clusters*avg_cluster_size
-        self._init_clusters()
-        if (p_buy + p_hold + p_sell != 1):
-            raise Exception("INIT: Probabilities don't add up to one")
-
+        self.delta_R = delta_R
+        self.num_agents = N
+        self.M = M
+        # intially each agent in own cluster
+        # also herding degree is not exact due to integer rounding
+        self.herding_degree = 1/N
+        self.cluster_sizes = self.get_new_clusters()
+        self.market_state = NEUTRAL
+        self.asymmetric_preference = asymmetric_preference
+        self.p = p
+        if asymmetric_preference:
+            self.c = c
+        self.total_gamma = utility.calc_total_gamma(M)
 
     def step(self):
         ret = 0
         actions = [BUY,SELL,HOLD]
         
-        for size in self.cluster_sizes:
-            #randomly choose an action given the current probabilities
-            action = np.random.choice(actions, p=self.probs)
-            ret += size * action
+        # if assymetric preference use different probs
+        if self.asymmetric_preference:
+            p_buy = self.p*(self.c*utility.integrated_volitility_perspective(self.volatility_hist,self.M,self.t)+(1-self.c))
+            probs = [p_buy, 2*self.p-p_buy, 1-2*self.p]
+            for size in self.cluster_sizes:
+                #randomly choose an action given the current probabilities
+                action = np.random.choice(actions, p=probs)
+                ret += size * action
+
+        else:
+            for size in self.cluster_sizes:
+                #randomly choose an action given the current probabilities
+                action = np.random.choice(actions, p=self.probs[self.market_state])
+                ret += size * action
 
         volatility = np.abs(ret)
 
         #update histories and parameter for next step
         self.return_hist[self.t] = ret
         self.volatility_hist[self.t] = volatility
-        self.update_clusters()
-        self.update_probs()
+        self.herding_hist[self.t] = self.herding_degree
+        
+        # update clusters
+        R_prime = utility.calc_weighted_return(self.return_hist, self.M, self.t, self.total_gamma,k=1.)
+        self.update_clusters(R_prime)
+        self.market_state = self.get_market_state(R_prime)
 
         #increment time
         self.t += 1
@@ -47,19 +81,43 @@ class Market:
         while self.t < self.t_end:
             self.step()
 
-    def update_probs(self):
-        print("TODO update probailities")
-        if (sum(self.probs)):
-            raise Exception("Update Probs: Probabilities don't add up to one")
 
-    def update_clusters(self):
-        print("TODO update the clusters")
+    def get_market_state(self,R_prime):
+        if R_prime > 0:
+            return BULL
+        elif R_prime < 0:
+            return BEAR
+        else:
+            return NEUTRAL
 
-    def _init_clusters(self):
+    def get_new_clusters(self):
         """Assign each agent to a cluster
-        NOTE: for now agents are not there own thing we just track the size of each cluster"""
-        for agent in range(self.num_agents):
-            # pick a cluster at random
-            cluster = np.random.randint(0,self.num_clusters)
-            self.cluster_sizes[cluster] += 1
+        NOTE: agents are not there own thing we just track the size of each cluster"""
+        num_clusters = int(1 / self.herding_degree) + 1 #determine number of clusters based on herding degree plus one so there is always at least one cluster
+        
+
+        # n random floats 
+        clusters = np.random.rand(num_clusters)
+        # extend the floats so the sum is approximately num_agents (might be less, because of flooring) 
+        clusters = np.floor(clusters*self.num_agents/sum(clusters)).astype(int)
+        # randomly add missing numbers 
+        for i in range(self.num_agents - sum(clusters)): 
+            clusters[np.random.randint(0,num_clusters)] += 1
+
+        return clusters
+
+    def update_clusters(self,R_prime):
+        self.herding_degree = abs(R_prime - self.delta_R)/self.num_agents
+        if self.herding_degree == 0:
+            self.herding_degree = 1/self.num_agents # herding degree of 0 doesn't exist 
+        self.cluster_sizes = self.get_new_clusters()
+
+    def _intialize_probs(self,alpha,p):
+        beta = 2-alpha 
+        probs = np.zeros((3,3))
+        probs[BEAR] = np.array([p*beta,p*beta,(1-2*p*beta)])
+        probs[NEUTRAL] = np.array([p,p,(1-2*p)])
+        probs[BULL] = np.array([p*alpha,p*alpha,(1-2*p*alpha)])
+        return probs
+
 

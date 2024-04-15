@@ -3,6 +3,13 @@ import numpy as np
 
 nu = 1.12
 
+def calc_total_gamma(M):
+    total_gamma = 0
+    for i in range(1,M+1):
+        total_gamma += i**(-nu)
+    return total_gamma
+
+
 def return_from_price(price_arr):
     """
     Given an array of closing prices returns an np.array of returns as described in 2.1
@@ -28,20 +35,33 @@ def calc_normalized_return(return_history):
 
     sigma = (R2-R**2)**0.5
     return (return_history-R)/sigma
-    
-def calc_weighted_return(return_history, M, k = 1):
+
+def calc_weighted_return(return_history, M, t, total_gamma, k = 1):
     """
     return_history: numpy array full of returns
     M is max investment horizon
     k is weight
     """
     outter_sum = 0
-    for i in range(1,M+1):
-        gamma = i**(-nu)
-        inner_sum = 0
-        for j in range(i):
-            inner_sum += gamma * return_history[-j] #Not tested maybe wrong
-        outter_sum += inner_sum
+    end_step = min(M,t) # don't go off the end if history is shorter than max horizon
+    for i in range(end_step):
+        gamma = (i+1)**(-nu)/total_gamma
+        r = return_history[t-(i+1):t]
+        outter_sum += gamma * np.sum(r)
+    return k * outter_sum
+    
+def calc_weighted_return_noGamma(return_history, M, t, k = 1):
+    """
+    return_history: numpy array full of returns
+    M is max investment horizon
+    k is weight
+    """
+    outter_sum = 0
+    end_step = min(M,t) # don't go off the end if history is shorter than max horizon
+    for i in range(end_step):
+        gamma = (i+1)**(-nu)
+        r = return_history[t-(i+1):t]
+        outter_sum += gamma * np.sum(r)
     return k * outter_sum
 
 def calc_L(normal_return_history,t):
@@ -58,11 +78,27 @@ def calc_L(normal_return_history,t):
     for i in range(n-t):
         summation += normal_return_history[i] * np.abs(normal_return_history[i + t])**2
         Z += np.abs(normal_return_history[i])**2
-    summation = summation/(n-t) # NOTE: May need +1 here in denominator because of indexing
-    Z = Z/(n-t)
+    summation = summation/(n-t+1) # NOTE: May need +1 here in denominator because of indexing
+    Z = Z/(n-t+1)
     Z = Z ** 2
     return summation/Z
-        
+
+def average_volatility(volitility_arr, i, t):
+    end_step = min(i,t)
+    temp = volitility_arr[t-end_step:t]
+    return np.sum(volitility_arr)/i
+
+def integrated_volitility_perspective(volitility_arr, M, t):
+    vm = average_volatility(volitility_arr,M,t)
+    outter_sum = 0
+    end_step = min(M,t)
+    for i in range(end_step):
+        gamma = (i+1)**(-nu)
+        outter_sum += gamma * average_volatility(volitility_arr,i+1,t)
+
+    if vm == 0:
+        return 0
+    return outter_sum/vm
 
 
 
