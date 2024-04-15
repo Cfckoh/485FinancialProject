@@ -175,21 +175,20 @@ mark_data %>% filter(ts == 4430) #figure out date from ts
 ts<-mark_data$ts[-c(1)]
 ret<-mark_data$rt[-c(1)]
 vol<-mark_data$Rt_abs[-c(1)]
-tp<-floor(180/60) #t prime its a delta t or step size
-tw<-30 #time window
-ws<-20320 #window start time
+tp<-1 #t prime its a delta t or step size
+tw<-260 #time window
+ws<-20105 #window start time
 
 Lt<-leverage(ts,ret,vol,tp,tw,ws)
-Lt1<-Lt
-gg <- Lt1 %>% ggplot(aes(tau)) + 
+gg <- Lt %>% ggplot(aes(tau)) + 
   theme_minimal() + geom_hline(yintercept=0) + geom_vline(xintercept = 0) + 
   ggtitle("2008 Return Volatility Correlation Lt vs tau") + labs(x="tau (cumulative time)", y="Lt (return-vol-corr)") +
   #geom_point(aes(y=V), color = "blue") + geom_line(aes(y=V), color = "blue", linewidth= .3) +
   geom_point(aes(y=rvc), color = "red") + geom_line(aes(y=rvc), color = "red", linetype = "dashed") +
-  scale_y_continuous(breaks = seq(-1, 1, by = 0.10), limits = c(-1,1)) 
+  scale_y_continuous(breaks = seq(-.8, .8, by = 0.10), limits = c(-0.8,0.8)) 
 gg
 
-mark_data %>% filter(ts == 20320) #figure out date from ts
+mark_data %>% filter(ts == 20365) #figure out date from ts
 #adjust scale of graph accordingly
 
 ------------------------------------------------------
