@@ -2,6 +2,7 @@ __pycache__/
 .ipynb_checkpoints/
 playground.ipynb
 test.ipynb
+model_example.ipynb
 abm-fms-intel-master/.DS_Store
 abm-fms-intel-master/.gitignore
 abm-fms-intel-master/agent.py

@@ -1,5 +1,6 @@
 import numpy as np
 import utility
+import csv
 
 BUY  = 1
 SELL = -1
@@ -23,9 +24,10 @@ class Market:
         
         print("Initializing Market")
         #np.random.seed(0) 
-        self.probs = self._intialize_probs(alpha,p) #[p_buy,p_sell,p_hold]calc_weighted_return
-        self.return_hist = np.zeros(t_end, dtype=int)
-        self.volatility_hist = np.zeros(t_end, dtype=int)
+        self.alpha=alpha
+        self.probs = self._intialize_probs(alpha,p) 
+        self.return_hist = np.zeros(t_end, dtype="int64")
+        self.volatility_hist = np.zeros(t_end, dtype="int64")
         self.herding_hist = np.zeros(t_end, dtype=float)
         self.t_end = t_end
         self.t = 0
@@ -70,7 +72,7 @@ class Market:
         self.herding_hist[self.t] = self.herding_degree
         
         # update clusters
-        R_prime = utility.calc_weighted_return(self.return_hist, self.M, self.t, self.total_gamma,k=1.)
+        R_prime = utility.calc_weighted_return(self.return_hist, self.M, self.t, self.total_gamma,k=0.01)
         self.update_clusters(R_prime)
         self.market_state = self.get_market_state(R_prime)
 
@@ -121,3 +123,23 @@ class Market:
         return probs
 
 
+
+    def save_run(self):
+        """
+        Saves the returns, volatilities, and L(t) values into a csv.
+        Since the start of the simulation is volatile for t<M it only saves data after this point.
+        If their are not enough steps it will error or have undetermined behavior.
+        """
+        lt = []
+        # start from 2 because can't correlate arrays of length 0 and 1
+        for t_prime in range(2,self.t-self.M):
+            ret_arr = self.return_hist[self.M:self.M+t_prime]
+            vol_arr = np.abs(self.return_hist[self.M:self.M+t_prime])
+            lt.append(np.corrcoef(ret_arr,vol_arr)[0][1])
+
+        data = {"returns": self.return_hist[self.M:],"volatilities": self.volatility_hist[self.M:],"L(t)":lt}
+
+        with open(f"data/results_a={self.alpha}_dR={self.delta_R}.csv", "w") as outfile:
+            writer = csv.writer(outfile)
+            writer.writerow(data.keys())
+            writer.writerows(zip(*data.values()))
