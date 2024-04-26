@@ -1,3 +1,13 @@
-TODO work on the code
-
 Article: New approaches in agent-based modeling of complex financial systems
+
+In finance theory, investors make trading decisions by maximizing future return per unit of risk, as calculated using relevant and accurate information. Nonetheless, empirical observations suggest that investor behavior may also be shaped by psychological biases, including loss aversion, an inclination to avoid realizing losses, and herd mentalities, or people's preference to act in a group. Herd mentality refers to the propensity of individuals to mimic the actions of a larger group, sometimes disregarding their own analysis or some underlying information.  There is complexity present when attempting to model such behavior from its non-linear nature and its dependency on a multitude of social and psychological factors. This discrepancy creates unpredictability in financial markets and makes investor behaviors difficult to model and understand.
+
+Agent-based models (ABMs) are models that observe how agents interact with a certain system in order to understand the system and what governs it's outcomes. ABMs can be used to analyze the interactions between individual agents in financial markets. Here, the people are the agents, the interaction is their decisions to buy/sell/hold stock, and the system is the mart. We can analyze how each agent makes a decision based on the state of the market at discrete time steps.
+
+At any time step, stocks are either bought, sold or held based on probabilities which are set to reflect previous market dynamics. The decisions of all the agents are combined to simulate supply and demand dynamics which drive market returns and volatility. Returns measure the change in value of the investment over a period. 
+
+In periods of negative returns, we say there is a bear market and in periods of positive return we say there is a bull market. Volatility is the frequency and magnitude of price movements.
+
+Within the model, agents' decision probabilities can be manipulated to model the irrational preferences of investors. Asymmetric trading is where an investor’s decision or willingness to trade is affected by the previous price returns, leading the trading probability to be distinct in bull and bear markets. This means that although from the outside investors’ decisions to trade may seem random, they are actually influenced heavily by the recent results of the market. Investors, although unique, are not always alone in how they act or view the market. This leads investors to end up grouping together or “herding” into groups of equiprobable trading decisions.
+
+Here we attempt to reproduce leverage and anti-leverage affects for a market simulation. We do so by giving the market two parameters: $\alpha$ and $\Delta R$
