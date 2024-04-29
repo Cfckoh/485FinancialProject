@@ -83,6 +83,15 @@ def calc_L(normal_return_history,t):
     Z = Z ** 2
     return summation/Z
 
+def calc_L_new(t, M, return_hist):
+    lt = []
+    # start from 2 because can't correlate arrays of length 0 and 1
+    for t_prime in range(2,t-M):
+        ret_arr = return_hist[M:M+t_prime]
+        vol_arr = np.abs(return_hist[M:M+t_prime])
+        lt.append(np.corrcoef(ret_arr,vol_arr)[0][1])
+    return lt
+
 def average_volatility(volitility_arr, i, t):
     end_step = min(i,t)
     temp = volitility_arr[t-end_step:t]

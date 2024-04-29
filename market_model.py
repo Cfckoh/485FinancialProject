@@ -23,7 +23,6 @@ class Market:
         """
         
         print("Initializing Market")
-        #np.random.seed(0) 
         self.alpha=alpha
         self.probs = self._intialize_probs(alpha,p) 
         self.return_hist = np.zeros(t_end, dtype="int64")
@@ -122,20 +121,13 @@ class Market:
         probs[BULL] = np.array([p*alpha,p*alpha,(1-2*p*alpha)])
         return probs
 
-
-
     def save_run(self):
         """
         Saves the returns, volatilities, and L(t) values into a csv.
         Since the start of the simulation is volatile for t<M it only saves data after this point.
         If their are not enough steps it will error or have undetermined behavior.
         """
-        lt = []
-        # start from 2 because can't correlate arrays of length 0 and 1
-        for t_prime in range(2,self.t-self.M):
-            ret_arr = self.return_hist[self.M:self.M+t_prime]
-            vol_arr = np.abs(self.return_hist[self.M:self.M+t_prime])
-            lt.append(np.corrcoef(ret_arr,vol_arr)[0][1])
+        lt = utility.calc_L_new(self.t, self.M, self.return_hist)
 
         data = {"returns": self.return_hist[self.M:],"volatilities": self.volatility_hist[self.M:],"L(t)":lt}
 
