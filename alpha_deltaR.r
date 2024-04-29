@@ -1,22 +1,22 @@
 
 #FUNDAMENTAL PARAMETERS 
-data<-read.csv("/Users/Personal/Documents/GitHub/485FinancialProject/data/Index_Data.csv") #mark_data gets updated as we go along
-data<-read.csv("/Users/Personal/Documents/GitHub/485FinancialProject/data/2008_SPX_Recession_Prices.csv")
+data<-read.csv("./data/Index_Data.csv") #mark_data gets updated as we go along
+data<-read.csv("./data/2008_SPX_Recession_Prices.csv")
 
 #ALL TIME DATA
-data<-read.csv("/Users/Personal/Documents/GitHub/485FinancialProject/data/ALLTIME_SPX.csv")
-data<-read.csv("/Users/Personal/Documents/GitHub/485FinancialProject/data/ALLTIME_Shanghai.csv")
-data<-read.csv("/Users/Personal/Documents/GitHub/485FinancialProject/data/ALLTIME_FTSE.csv")
-data<-read.csv("/Users/Personal/Documents/GitHub/485FinancialProject/data/ALLTIME_Nikkei.csv")
-data<-read.csv("/Users/Personal/Documents/GitHub/485FinancialProject/data/ALLTIME_Hangseng.csv")
-data<-read.csv("/Users/Personal/Documents/GitHub/485FinancialProject/data/ALLTIME_DAX.csv")
-data<-read.csv("/Users/Personal/Documents/GitHub/485FinancialProject/data/ALLTIME_VIX.csv")
+data<-read.csv("./data/ALLTIME_SPX.csv")
+data<-read.csv("./data/ALLTIME_Shanghai.csv")
+data<-read.csv("./data/ALLTIME_FTSE.csv")
+data<-read.csv("./data/ALLTIME_Nikkei.csv")
+data<-read.csv("./data/ALLTIME_Hangseng.csv")
+data<-read.csv("./data/ALLTIME_DAX.csv")
+data<-read.csv("./data/ALLTIME_VIX.csv")
 
 #SPX
-data<-read.csv("/Users/Personal/Documents/GitHub/485FinancialProject/data/ALLTIME_SPX.csv")
+data<-read.csv("./data/ALLTIME_SPX.csv")
 
 #Shanghai
-data<-read.csv("/Users/Personal/Documents/GitHub/485FinancialProject/data/ALLTIME_Shanghai.csv")
+data<-read.csv("./data/ALLTIME_Shanghai.csv")
 
 
 #mark_data gets updated as we go along

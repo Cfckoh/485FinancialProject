@@ -99,12 +99,3 @@ def integrated_volitility_perspective(volitility_arr, M, t):
     if vm == 0:
         return 0
     return outter_sum/vm
-
-
-
-
-
-
-
-
-
