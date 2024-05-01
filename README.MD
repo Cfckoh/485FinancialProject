@@ -11,3 +11,5 @@ In periods of negative returns, we say there is a bear market and in periods of 
 Within the model, agents' decision probabilities can be manipulated to model the irrational preferences of investors. Asymmetric trading is where an investor’s decision or willingness to trade is affected by the previous price returns, leading the trading probability to be distinct in bull and bear markets. This means that although from the outside investors’ decisions to trade may seem random, they are actually influenced heavily by the recent results of the market. Investors, although unique, are not always alone in how they act or view the market. This leads investors to end up grouping together or “herding” into groups of equiprobable trading decisions.
 
 Here we attempt to reproduce leverage and anti-leverage affects for a market simulation. We do so by giving the market two parameters: $\alpha$ and $\Delta R$
+
+An example of the model's initialization and testing can be found in model_example.ipynb. For R calculations of alpha and deltaR, you can find them in alpha_deltaR.r.
